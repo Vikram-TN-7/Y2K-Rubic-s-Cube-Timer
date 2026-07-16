@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Rubik's Cube Timer | Speedcubing Stopwatch</title>
+  <meta name="description" content="Professional Rubik's cube timer for speedcubers. Track your solves, best time, and average with precision. Free online cubing timer." />
+  <meta name="keywords" content="rubik's cube timer, speedcubing timer, cube timer, rubiks cube stopwatch, cubing timer, puzzle timer" />
+  <link rel="canonical" href="https://yourdomain.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: #0b141a;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+    }
+
+    .timer-container {
+      max-width: 660px;
+      width: 100%;
+      background: #1a2a33;
+      padding: 24px 20px 26px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      border: 1px solid #2b3b44;
+      border-radius: 6px;
+    }
+
+    .brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 0 4px;
+    }
+    .brand h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: #d4edf8;
+    }
+    .brand h1 i {
+      color: #ffb347;
+      margin-right: 8px;
+    }
+    .brand i {
+      color: #7e9aa8;
+      font-size: 1.3rem;
+    }
+
+    .timer-display {
+      background: #0f1a1f;
+      padding: 20px 14px;
+      margin: 8px 0 14px;
+      text-align: center;
+      border: 1px solid #2a404b;
+      border-radius: 6px;
+    }
+    #timer {
+      font-size: 4.6rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 3px;
+      color: #d4edf8;
+      background: #0b141a;
+      padding: 0 8px;
+      display: inline-block;
+      line-height: 1.3;
+      min-width: 180px;
+      border-radius: 4px;
+    }
+    .timer-sub {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 4px;
+      color: #7e9aa8;
+      font-weight: 500;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+    }
+    .timer-sub i {
+      margin-right: 4px;
+    }
+
+    .action-area {
+      display: flex;
+      gap: 10px;
+      margin: 18px 0 20px;
+    }
+    .action-area .cube-btn {
+      flex: 1;
+    }
+    .cube-btn {
+      background: #2b3b44;
+      border: none;
+      border-bottom: 5px solid #0f1a1f;
+      padding: 16px 20px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #ecf9ff;
+      letter-spacing: 1px;
+      box-shadow: 0 8px 0 #0f1a1f;
+      transition: all 0.06s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(145deg, #3b515c, #1f2f38);
+      text-transform: uppercase;
+      justify-content: center;
+      border-radius: 4px;
+    }
+    .cube-btn:active {
+      transform: translateY(5px);
+      border-bottom-width: 2px;
+      box-shadow: 0 3px 0 #0f1a1f;
+    }
+    .cube-btn i {
+      font-size: 1.4rem;
+      color: #ffb347;
+    }
+    .cube-btn.ready {
+      background: #1f6f8f;
+      border-bottom-color: #0c3a4a;
+      box-shadow: 0 8px 0 #0c3a4a;
+    }
+    .cube-btn.paused {
+      background: #8f6f1f;
+      border-bottom-color: #5a3f0a;
+      box-shadow: 0 8px 0 #5a3f0a;
+    }
+    .cube-btn.stop-btn {
+      background: #6f2f2f;
+      border-bottom-color: #3f0f0f;
+      box-shadow: 0 8px 0 #3f0f0f;
+    }
+    .cube-btn.restart-btn {
+      background: #4a3f3f;
+      border-bottom-color: #2a1f1f;
+      box-shadow: 0 8px 0 #2a1f1f;
+      flex: 0.5;
+      font-size: 1rem;
+      padding: 16px 12px;
+    }
+    .cube-btn.restart-btn i {
+      font-size: 1.2rem;
+      color: #ff6b6b;
+    }
+
+    .stats-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 8px;
+      margin: 14px 0 18px;
+      justify-content: space-between;
+    }
+    .stat-item {
+      background: #15222a;
+      padding: 10px 14px;
+      flex: 1 0 auto;
+      min-width: 90px;
+      text-align: center;
+      border: 1px solid #2a404b;
+      position: relative;
+      border-radius: 4px;
+    }
+    .stat-item span:first-child {
+      display: block;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      color: #7e9aa8;
+      letter-spacing: 0.8px;
+    }
+    .stat-item .value {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #d4edf8;
+      margin-top: 2px;
+    }
+    .avg-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .avg-controls button {
+      background: #2a404b;
+      border: none;
+      color: #d4edf8;
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: 0.15s;
+    }
+    .avg-controls button:hover {
+      background: #3a5a6b;
+    }
+    .avg-controls .avg-count {
+      color: #ffb347;
+      font-weight: 700;
+      font-size: 1rem;
+      min-width: 20px;
+    }
+
+    .history-section {
+      background: #0f1a1f;
+      padding: 14px 12px 12px;
+      margin: 12px 0 6px;
+      border: 1px solid #2a404b;
+      border-radius: 4px;
+    }
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      color: #9bb7c7;
+      font-weight: 600;
+      padding: 0 4px 6px;
+      border-bottom: 1px solid #1f333d;
+      font-size: 0.9rem;
+    }
+    .history-list {
+      max-height: 130px;
+      overflow-y: auto;
+      padding-right: 4px;
+      margin-top: 6px;
+      scrollbar-width: thin;
+      scrollbar-color: #2f4a57 #0b141a;
+    }
+    .history-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .history-list::-webkit-scrollbar-track {
+      background: #0b141a;
+      border-radius: 4px;
+    }
+    .history-list::-webkit-scrollbar-thumb {
+      background: #2f4a57;
+      border-radius: 4px;
+    }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px 6px 12px;
+      margin-bottom: 3px;
+      background: #15222a;
+      font-size: 0.9rem;
+      color: #c8dbe6;
+      border-left: 3px solid #ffb347;
+      border-radius: 2px;
+    }
+    .history-item .time {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .history-item .date {
+      color: #7e9aa8;
+      font-size: 0.75rem;
+    }
+    .history-item .delete-btn {
+      background: transparent;
+      border: none;
+      color: #5d7e8d;
+      cursor: pointer;
+      padding: 2px 6px;
+      font-size: 0.9rem;
+      transition: 0.15s;
+      border-radius: 2px;
+    }
+    .history-item .delete-btn:hover {
+      color: #ff6b6b;
+    }
+    .clear-btn {
+      background: transparent;
+      border: 1px solid #3f5a66;
+      color: #a0bccd;
+      padding: 3px 14px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+      letter-spacing: 0.3px;
+      border-radius: 4px;
+    }
+    .clear-btn:hover {
+      background: #2f4a57;
+      color: #fff;
+      border-color: #ffb347;
+    }
+
+    .footer {
+      text-align: right;
+      margin-top: 14px;
+      padding-top: 8px;
+      border-top: 1px solid #1f333d;
+      color: #5d7e8d;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+    }
+    .footer i {
+      color: #ffb347;
+      margin-right: 4px;
+    }
+
+    @media (max-width: 480px) {
+      .timer-container { padding: 16px 12px; }
+      #timer { font-size: 3.2rem; min-width: 130px; }
+      .cube-btn { font-size: 1rem; padding: 12px 12px; }
+      .cube-btn.restart-btn { font-size: 0.8rem; padding: 12px 8px; }
+      .stat-item { min-width: 60px; padding: 6px 8px; }
+      .stat-item .value { font-size: 1rem; }
+      .brand h1 { font-size: 1.2rem; }
+      .action-area { gap: 6px; }
+    }
+    @media (min-width: 768px) {
+      #timer { font-size: 6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <div class="timer-container">
+    <div class="brand">
+      <h1><i class="fas fa-cube"></i> Y2K Rubik's Cube Timer</h1>
+      <i class="fas fa-bolt"></i>
+    </div>
+
+    <div class="timer-display">
+      <div id="timer">0.00</div>
+      <div class="timer-sub">
+        <span><i class="fas fa-clock"></i> <span id="statusText">READY</span></span>
+        <span><i class="fas fa-keyboard"></i> SPACE</span>
+      </div>
+    </div>
+
+    <div class="action-area">
+      <button class="cube-btn ready" id="mainBtn">
+        <i class="fas fa-hand"></i> ready
+      </button>
+      <button class="cube-btn stop-btn" id="stopBtn">
+        <i class="fas fa-stop"></i> stop
+      </button>
+      <button class="cube-btn restart-btn" id="restartBtn" title="Reset timer">
+        <i class="fas fa-undo"></i>
+      </button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span>🏆 best</span>
+        <div class="value" id="bestValue">—</div>
+      </div>
+      <div class="stat-item">
+        <span>📊 average</span>
+        <div class="value">
+          <div id="avgValue">—</div>
+          <div class="avg-controls">
+            <button id="avgDown">−</button>
+            <span class="avg-count" id="avgCount">5</span>
+            <button id="avgUp">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <span>📋 solves</span>
+        <div class="value" id="solvesValue">0</div>
+      </div>
+    </div>
+
+    <div class="history-section">
+      <div class="history-header">
+        <span><i class="fas fa-history" style="margin-right: 6px;"></i> HISTORY</span>
+        <button class="clear-btn" id="clearBtn"><i class="fas fa-trash-alt"></i> clear all</button>
+      </div>
+      <div class="history-list" id="historyList">
+        <div style="color: #5d7e8d; padding: 10px 4px; text-align: center; font-size: 0.9rem;">
+          <i class="fas fa-cube" style="margin-right: 6px;"></i> no times yet
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <i class="fas fa-crown"></i> Made by Vikram
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    'use strict';
+
+    // Keep screen awake using Wake Lock API
+    let wakeLock = null;
+    
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+          console.log('Screen wake lock acquired');
+        }
+      } catch (err) {
+        console.warn('Wake Lock not supported:', err);
+      }
+    }
+
+    function releaseWakeLock() {
+      try {
+        if (wakeLock) {
+          wakeLock.release();
+          wakeLock = null;
+          console.log('Screen wake lock released');
+        }
+      } catch (err) {
+        console.warn('Failed to release wake lock:', err);
+      }
+    }
+
+    // Handle visibility change to re-request wake lock
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && (status === 'running' || status === 'paused')) {
+        requestWakeLock();
+      }
+    });
+
+    const timerEl = document.getElementById('timer');
+    const statusText = document.getElementById('statusText');
+    const mainBtn = document.getElementById('mainBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const bestValue = document.getElementById('bestValue');
+    const avgValue = document.getElementById('avgValue');
+    const avgCountEl = document.getElementById('avgCount');
+    const solvesValue = document.getElementById('solvesValue');
+    const historyList = document.getElementById('historyList');
+    const clearBtn = document.getElementById('clearBtn');
+    const avgUp = document.getElementById('avgUp');
+    const avgDown = document.getElementById('avgDown');
+
+    let time = 0;
+    let isRunning = false;
+    let isPaused = false;
+    let status = 'idle'; // idle | running | paused | stopped
+    let history = [];
+    let best = null;
+    let avgCount = 5;
+    let intervalId = null;
+    let startTime = 0;
+    let elapsed = 0;
+
+    function loadHistory() {
+      try {
+        const stored = localStorage.getItem('y2kCubeHistory');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          history = parsed;
+          if (history.length > 0) {
+            const sorted = [...history].sort((a, b) => a.time - b.time);
+            best = sorted[0];
+          }
+        }
+      } catch (e) {}
+    }
+
+    function saveHistory() {
+      try {
+        localStorage.setItem('y2kCubeHistory', JSON.stringify(history));
+        if (history.length > 0) {
+          const sorted = [...history].sort((a, b) => a.time - b.time);
+          best = sorted[0];
+        } else {
+          best = null;
+        }
+      } catch (e) {}
+    }
+
+    function formatTime(ms) {
+      if (ms < 0) ms = 0;
+      const totalSeconds = ms / 1000;
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = Math.floor(totalSeconds % 60);
+      const centiseconds = Math.floor((ms % 1000) / 10);
+      if (minutes > 0) {
+        return `${minutes}:${String(seconds).padStart(2, '0')}.${String(centiseconds).padStart(2, '0')}`;
+      }
+      return `${seconds}.${String(centiseconds).padStart(2, '0')}`;
+    }
+
+    function updateUI() {
+      timerEl.textContent = formatTime(time);
+      
+      if (status === 'idle') statusText.textContent = 'READY';
+      else if (status === 'running') statusText.textContent = 'LIVE';
+      else if (status === 'paused') statusText.textContent = 'PAUSED';
+      else if (status === 'stopped') statusText.textContent = 'STOPPED';
+
+      const icon = mainBtn.querySelector('i');
+      if (status === 'idle' || status === 'stopped') {
+        mainBtn.className = 'cube-btn ready';
+        icon.className = 'fas fa-hand';
+        mainBtn.childNodes[2].textContent = ' ready';
+      } else if (status === 'running') {
+        mainBtn.className = 'cube-btn';
+        icon.className = 'fas fa-pause';
+        mainBtn.childNodes[2].textContent = ' pause';
+      } else if (status === 'paused') {
+        mainBtn.className = 'cube-btn paused';
+        icon.className = 'fas fa-play';
+        mainBtn.childNodes[2].textContent = ' resume';
+      }
+
+      // Update stop button
+      if (status === 'idle' || status === 'stopped') {
+        stopBtn.style.opacity = '0.5';
+        stopBtn.style.pointerEvents = 'none';
+      } else {
+        stopBtn.style.opacity = '1';
+        stopBtn.style.pointerEvents = 'auto';
+      }
+
+      bestValue.textContent = best ? formatTime(best.time) : '—';
+      updateAverage();
+      solvesValue.textContent = history.length;
+      renderHistory();
+    }
+
+    function updateAverage() {
+      if (history.length === 0) {
+        avgValue.textContent = '—';
+        return;
+      }
+      const count = Math.min(avgCount, history.length);
+      const lastN = history.slice(0, count);
+      const avg = lastN.reduce((a, b) => a + b.time, 0) / lastN.length;
+      avgValue.textContent = formatTime(avg);
+    }
+
+    function renderHistory() {
+      if (history.length === 0) {
+        historyList.innerHTML = `
+          <div style="color: #5d7e8d; padding: 10px 4px; text-align: center; font-size: 0.9rem;">
+            <i class="fas fa-cube" style="margin-right: 6px;"></i> no times yet
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      history.forEach((item, index) => {
+        html += `
+          <div class="history-item">
+            <span class="time">${formatTime(item.time)}</span>
+            <span class="date">${item.date || ''}</span>
+            <button class="delete-btn" data-index="${index}" title="Delete this record">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        `;
+      });
+      historyList.innerHTML = html;
+
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const index = parseInt(this.dataset.index);
+          deleteHistoryItem(index);
+        });
+      });
+    }
+
+    function deleteHistoryItem(index) {
+      if (index >= 0 && index < history.length) {
+        history.splice(index, 1);
+        saveHistory();
+        updateUI();
+      }
+    }
+
+    function startTimer() {
+      if (isRunning) return;
+      if (status === 'idle' || status === 'stopped') {
+        time = 0;
+        elapsed = 0;
+      }
+      startTime = performance.now() - elapsed;
+      isRunning = true;
+      isPaused = false;
+      status = 'running';
+      requestWakeLock();
+      if (intervalId) clearInterval(intervalId);
+      intervalId = setInterval(() => {
+        const now = performance.now();
+        const delta = now - startTime;
+        time = delta;
+        elapsed = delta;
+        timerEl.textContent = formatTime(time);
+      }, 10);
+      updateUI();
+    }
+
+    function pauseTimer() {
+      if (!isRunning || isPaused) return;
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+      isPaused = true;
+      status = 'paused';
+      releaseWakeLock();
+      updateUI();
+    }
+
+    function resumeTimer() {
+      if (!isPaused) return;
+      startTime = performance.now() - elapsed;
+      isPaused = false;
+      status = 'running';
+      requestWakeLock();
+      if (intervalId) clearInterval(intervalId);
+      intervalId = setInterval(() => {
+        const now = performance.now();
+        const delta = now - startTime;
+        time = delta;
+        elapsed = delta;
+        timerEl.textContent = formatTime(time);
+      }, 10);
+      updateUI();
+    }
+
+    function stopTimer() {
+      if (!isRunning) return;
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+      isRunning = false;
+      isPaused = false;
+      status = 'stopped';
+      releaseWakeLock();
+      const finalTime = elapsed;
+      if (finalTime > 80) {
+        history = [{ time: finalTime, date: new Date().toLocaleString() }, ...history].slice(0, 50);
+        saveHistory();
+      }
+      updateUI();
+    }
+
+    function resetTimer() {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+      isRunning = false;
+      isPaused = false;
+      time = 0;
+      elapsed = 0;
+      startTime = 0;
+      status = 'idle';
+      releaseWakeLock();
+      updateUI();
+    }
+
+    function handleMainButton() {
+      if (status === 'idle' || status === 'stopped') {
+        startTimer();
+      } else if (status === 'running') {
+        pauseTimer();
+      } else if (status === 'paused') {
+        resumeTimer();
+      }
+    }
+
+    function handleStopButton() {
+      if (status === 'running' || status === 'paused') {
+        stopTimer();
+      }
+    }
+
+    function handleKeyDown(e) {
+      if (e.code === 'Space' && !e.repeat) {
+        e.preventDefault();
+        if (status === 'idle' || status === 'stopped') {
+          startTimer();
+        } else if (status === 'running') {
+          pauseTimer();
+        } else if (status === 'paused') {
+          resumeTimer();
+        }
+      }
+      if (e.code === 'Escape') {
+        e.preventDefault();
+        if (status === 'running' || status === 'paused') {
+          stopTimer();
+        }
+      }
+    }
+
+    function handleClearHistory() {
+      if (window.confirm('Clear all history?')) {
+        history = [];
+        best = null;
+        localStorage.removeItem('y2kCubeHistory');
+        updateUI();
+      }
+    }
+
+    function changeAvgCount(delta) {
+      const newVal = avgCount + delta;
+      if (newVal >= 1 && newVal <= 50) {
+        avgCount = newVal;
+        avgCountEl.textContent = avgCount;
+        updateAverage();
+      }
+    }
+
+    function init() {
+      loadHistory();
+      saveHistory();
+      updateUI();
+
+      mainBtn.addEventListener('click', handleMainButton);
+      stopBtn.addEventListener('click', handleStopButton);
+      restartBtn.addEventListener('click', resetTimer);
+      window.addEventListener('keydown', handleKeyDown);
+      clearBtn.addEventListener('click', handleClearHistory);
+      avgUp.addEventListener('click', () => changeAvgCount(1));
+      avgDown.addEventListener('click', () => changeAvgCount(-1));
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+  })();
+</script>
+
+</body>
+</html>
